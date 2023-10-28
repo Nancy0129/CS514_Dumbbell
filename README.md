@@ -2,7 +2,11 @@
 In this lab, you will gain a little experience programming a packet-processing pipeline using the P4 programming language. In doing so, you will also learn a bit about using the Mininet network simulator.
 
 ## 0. Prepare the environment
-1. We have prepared a [docker image](https://hub.docker.com/layers/172524248/zx0319/p4lab/ready/images/sha256-421180232d5b6526b7b6fefd60eb1603293269662a0665ab3b95af0fb75af266?context=repo) for you. You can use `docker run --privileged -it zx0319/p4lab:ready bash` to open a bash terminal in the docker container. Note: This docker image will only run on an x86 machine (not for ARM machines, such as M1/M2 Macs). You can run this on the [VCM](https://vcm.duke.edu/). Please make sure you have enough storage space (16GB+) to pull the image and run it.
+1. Install Docker:\
+    a. [Windows](https://docs.docker.com/desktop/install/windows-install/)\
+    b. [Mac](https://docs.docker.com/desktop/install/mac-install/)\
+    c. [Linux](https://docs.docker.com/desktop/install/linux-install/) , [Ubuntu](https://docs.docker.com/desktop/install/ubuntu/)       
+1. We have prepared a [docker image](https://hub.docker.com/layers/172524248/zx0319/p4lab/ready/images/sha256-421180232d5b6526b7b6fefd60eb1603293269662a0665ab3b95af0fb75af266?context=repo) for you. You can use `docker run --privileged -it zx0319/p4lab:ready bash` to open a bash terminal in the docker container. Note: This docker image will only run on an x86 machine (have not been tested on M1/M2 macs, in case it does not work use VCM). You can run this on the [VCM](https://vcm.duke.edu/). Please make sure you have enough storage space (16GB+) to pull the image and run it.
 2. Clone this [lab2 repository](https://gitlab.oit.duke.edu/tm326/cs514-lab2) to your `/home` folder inside the container.
 3. You can use VSCode to attach to the (remote) docker container for development. If you are using the VCM, you can SSH to your VCM using VSCode and install the docker extension in your VCM to connect to the container.
 
