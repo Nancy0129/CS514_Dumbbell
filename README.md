@@ -1,92 +1,45 @@
-# CS514_ECE 558_lab_2
+# CS 514 Lab2 - Dumbbell
+In this lab, you will gain a little experience programming a packet-processing pipeline using the P4 programming language. In doing so, you will also learn a bit about using the Mininet network simulator.
 
+## 0. Prepare the environment
+1. We have prepared a [docker image](https://hub.docker.com/layers/172524248/zx0319/p4lab/ready/images/sha256-421180232d5b6526b7b6fefd60eb1603293269662a0665ab3b95af0fb75af266?context=repo) for you. You can use `docker run --privileged -it zx0319/p4lab:ready bash` to open a bash terminal in the docker container. Note: This docker image will only run on an x86 machine (not for ARM machines, such as M1/M2 Macs). You can run this on the [VCM](https://vcm.duke.edu/). Please make sure you have enough storage space (16GB+) to pull the image and run it.
+2. Clone this [lab2 repository](https://gitlab.oit.duke.edu/tm326/cs514-lab2) to your `/home` folder inside the container.
+3. You can use VSCode to attach to the (remote) docker container for development. If you are using the VCM, you can SSH to your VCM using VSCode and install the docker extension in your VCM to connect to the container.
 
+## 1. Single Link Dumbbell
 
-## Getting started
+In this lab, we use a dumbbell topology that connects four hosts (h1-h4) with two programmable switches (s1, s2).
+![dumbbell](./pod-topo/dumbbell.png)
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Please fill in the MAC and IP addresses of h1-h4, s1, and s2 in the [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/). You can get all this information from the files under `./pod-topo/*`.
+2. Each switch already contains a table to be used in longest prefix matching. Please fill in the table for each switch in the [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/).
+3. Use `make run` to compile `basic.p4` and boot up mininet to test the connectivity.  You can use `h1 ping h2` to test the connectivity between every two hosts.  Please fill in the pairwise connectivity questions in the [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/). Then use `exit` to exit mininet, and use `make stop` to clean the network settings.
+4. Complete `basic.p4`. In the [`MyParser()`](./basic.p4#L55) you can extract the header fields and in [`MyIngress()`](./basic.p4#L81) adopt the longest prefix matching table which was defined in the previous section to enable the routing. Set corresponding ethernet fields and egress ports, and decrease the TTL accordingly. In [`MyDeparser()`](./basic.p4#L147), you still need to assemble the ethernet and IPv4 header.
+5. Use `make run` to run the new version `basic.p4`, then, fill in the pairwise connectivity in the [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/).  If you implement step 4 correctly, you should only see h3 detached from the network. This detachment is caused by the incomplete routing table in s1 and s2. Please change the routing table of s1 and s2, to support routing to and from h3.
+6. Submit `basic.p4`, `s1-runtime.json`, and `s2-runtime.json`.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 2. Double Links Dumbbell
 
-## Add your files
+1. Use `make run` to run the current code again. This time, we will use [iperf](https://openmaniak.com/iperf.php) to measure the usable bandwidth. Use `h3 iperf -s &` and `h4 iperf -s &` to run iperf in server mode in `bg` on h3 and h4. Then use `h1 iperf -c h3` to measure the usable bandwidth between h1 and h3. After that, use `h2 iperf -c h4` to measure the usable bandwidth between h2 and h4. Then use
+    ```
+    h1 iperf -c h3 &
+    h2 iperf -c h4
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+    ```
+    to measure the usable bandwidth while communicating concurrently. After the second command is finished, use `h1 bg` to retrieve the previous result. Fill in those numbers in the [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/).
 
-```
-cd existing_repo
-git remote add origin https://gitlab.oit.duke.edu/raa75/cs514_ece-558_lab_2.git
-git branch -M main
-git push -uf origin main
-```
+2. Answer the questions in [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/) about when and why two flows are traveling across the dumbbell, they receive only proportional bandwidth on one link.  Do you have ideas on how to improve this?
+![dumbbell](./pod-topo/dumbbell2.png)
 
-## Integrate with your tools
+3. Yes! We can balance the load with one more link! You can improve the topology by connecting `s1-p4` with `s2-p4`.
 
-- [ ] [Set up project integrations](https://gitlab.oit.duke.edu/raa75/cs514_ece-558_lab_2/-/settings/integrations)
+4. Changing the `topology.json` is not enough, you have to tell s1 and s2 to differentiate the flow from h1 to h3, and h2 to h4, and route them across different links. Please change the related longest prefix matching table accordingly.
 
-## Collaborate with your team
+5. Rerun the mininet and test the concurrent bandwidth with
+    ```
+    h1 iperf -c h3 &
+    h2 iperf -c h4
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+    ```
+    And fill the numbers in [lab2 question set](https://www.gradescope.com/courses/429975/assignments/2367568/).
+6. Submit `basic.p4`, `s1-runtime.json`, `s2-runtime.json`, and `topology.json`.
