@@ -6,7 +6,7 @@ In this lab, you will gain a little experience programming a packet-processing p
     a. [Windows](https://docs.docker.com/desktop/install/windows-install/)\
     b. [Mac](https://docs.docker.com/desktop/install/mac-install/)\
     c. [Linux](https://docs.docker.com/desktop/install/linux-install/) , [Ubuntu](https://docs.docker.com/desktop/install/ubuntu/)
-2. Clone this [lab2 repository](https://gitlab.oit.duke.edu/tm326/cs514-lab2)       
+2. Clone this [lab2 repository](https://gitlab.oit.duke.edu/raa75/cs514_ece-558_lab_2)       
 3. We have prepared a [docker image](https://hub.docker.com/layers/172524248/zx0319/p4lab/ready/images/sha256-421180232d5b6526b7b6fefd60eb1603293269662a0665ab3b95af0fb75af266?context=repo) for you. You can use `docker run -v <repo folder>:</home> --privileged -it zx0319/p4lab:ready bash` to open a bash terminal in the docker container. Note: This docker image will only run on an x86 machine (have not been tested on M1/M2 macs, in case it does not work use VCM). You can run this on the [VCM](https://vcm.duke.edu/). Please make sure you have enough storage space (16GB+) to pull the image and run it. \
 Or you can directly  start the container `docker run --privileged -it zx0319/p4lab:ready bash` and then clone the git repo inside it but this will erase any changes you make once the container is stopped.
 3. You can use VSCode to attach to the (remote) docker container for development. If you are using the VCM, you can SSH to your VCM using VSCode and install the docker extension in your VCM to connect to the container.
