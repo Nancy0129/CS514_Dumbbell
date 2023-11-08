@@ -24,33 +24,33 @@ In this lab, we use a 3 switch topology that connects 6 hosts (h1-h6) with 3 pro
 6. Submit `basic.p4`, `s1-runtime.json`, `s2-runtime.json`, and `s3-runtime.json`
 
 
-## 2. Single vs Double Link Dumbbell
+## 2. 4 Switch
 
-For this part, we use a simpler dumbbell topology that connects four hosts (h1-h4) with two programmable switches (s1, s2).
-![dumbbell](./pod-topo/dumbbell.png)
+For this part, we use a following topology that connects four hosts (h1-h4) with 4 programmable switches (s1, s2, s3 and s4).
+![four](./pod-topo/Q2_cyclic.png)
 
-1. Simplfy the network topology to look like the above diagram. You would need to remove host h5 and h6, switch s3 and all the links corresponding to these endpoints. You can also delete the s3-runtime.json at this point.
-2. Compile and use `h1 ping h2` (all combination between h1-h4) to ensure that the network is working properly.
-3. Use `make run` to run the current code again. This time, we will use [iperf](https://openmaniak.com/iperf.php) to measure the usable bandwidth. Use `h3 iperf -s &` and `h4 iperf -s &` to run iperf in server mode in `bg` on h3 and h4. Then use `h1 iperf -c h3` to measure the usable bandwidth between h1 and h3. After that, use `h2 iperf -c h4` to measure the usable bandwidth between h2 and h4. Then use
+1. Modify the network topology to look like the above diagram. You would need to remove host h5 and h6, add switch s4 and all the links corresponding to these endpoints.
+2. Compile and use `pingall` to ensure that the network is working properly.
+3. Use `make run` to run the current code again. This time, we will use [iperf](https://openmaniak.com/iperf.php) to measure the usable bandwidth. Use `h3 iperf -s &` and `h4 iperf -s &` to run iperf in server mode in `bg` on h3 and h4. Then use `h2 iperf -c h3` to measure the usable bandwidth between h2 and h3. After that, use `h1 iperf -c h4` to measure the usable bandwidth between h1 and h4. Then use
     ```
-    h1 iperf -c h3 &
-    h2 iperf -c h4
+    h2 iperf -c h3 &
+    h1 iperf -c h4
 
     ```
     to measure the usable bandwidth while communicating concurrently. After the second command is finished, use `h1 bg` to retrieve the previous result. Fill in those numbers in the [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/).
 
-2. Answer the questions in [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/) about when and why two flows are traveling across the dumbbell, they receive only proportional bandwidth on one link.  Do you have ideas on how to improve this?
-![dumbbell](./pod-topo/dumbbell2.png)
+2. Answer the questions in [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/) about when and why two flows are traveling across the network, they receive only proportional bandwidth on one link.  Do you have ideas on how to improve this?
+![four](./pod-topo/Q2.png)
 
-3. Yes! We can balance the load with one more link! You can improve the topology by connecting `s1-p4` with `s2-p4`.
+3. Yes! We can balance the load with one more link! You can improve the topology by connecting `s1-p5` with `s4-p5`.
 
-4. Changing the `topology.json` is not enough, you have to tell s1 and s2 to differentiate the flow from h1 to h3, and h2 to h4, and route them across different links. Please change the related longest prefix matching table accordingly.
+4. Changing the `topology.json` is not enough, you have to tell s1 troute flow from h1 to h4 through the new link. Please change the related longest prefix matching table accordingly.
 
 5. Rerun the mininet and test the concurrent bandwidth with
     ```
-    h1 iperf -c h3 &
-    h2 iperf -c h4
+    h2 iperf -c h3 &
+    h1 iperf -c h4
 
     ```
     And fill the numbers in [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/).
-6. Submit `basic.p4`, `s1-runtime.json`, `s2-runtime.json`, and `topology.json`.
+6. Submit `basic.p4`, `s1-runtime.json`, `s2-runtime.json`, `s3-runtime.json`, `s4-runtime.json`, and `topology.json`.
