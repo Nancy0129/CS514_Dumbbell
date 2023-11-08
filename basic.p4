@@ -93,7 +93,7 @@ control MyIngress(inout headers hdr,
         /* TODO: fill out code in action body */
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.srcAddr = dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
         hdr.ipv4.ttl = hdr.ipv4.ttl-1;
     }
 
@@ -104,6 +104,7 @@ control MyIngress(inout headers hdr,
         actions = {
             ipv4_forward;
             drop;
+            NoAction;
         }
         size = 1024;
         default_action = drop();
