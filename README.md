@@ -37,7 +37,7 @@ For this part, we use a following topology that connects four hosts (h1-h4) with
     h1 iperf -c h4
 
     ```
-    to measure the usable bandwidth while communicating concurrently. After the second command is finished, use `h1 bg` to retrieve the previous result. Fill in those numbers in the [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/).
+    to measure the usable bandwidth while communicating concurrently. After the second command is finished, use `h2 bg` to retrieve the previous result. Fill in those numbers in the [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/).
 
 2. Answer the questions in [lab2 question set](https://www.gradescope.com/courses/587863/assignments/3624531/) about when and why two flows are traveling across the network, they receive only proportional bandwidth on one link.  Do you have ideas on how to improve this?
 ![four](./pod-topo/Q2.png)
